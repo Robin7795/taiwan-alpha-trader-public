@@ -1,1 +1,1 @@
-﻿date,stock_id,horizon_votes,p_win_5,p_win_10,p_win_20,consensus_prob,alpha_percentile,momentum_score,smart_money_score,accumulation_score,final_score,regime
+﻿date,stock_id,stock_name,industry_category,horizon_votes,p_win_5,p_win_10,p_win_20,consensus_prob,alpha_percentile,momentum_score,smart_money_score,accumulation_score,final_score,regime
