@@ -39,8 +39,10 @@ latest_regime=(str(reg.iloc[-1]['regime']) if (not reg.empty and 'regime' in reg
 base_exposure=(float(reg.iloc[-1]['base_exposure']) if (not reg.empty and 'base_exposure' in reg and pd.notna(reg.iloc[-1]['base_exposure'])) else 0.0)
 active=int((health['health'].astype(str)=='ACTIVE').sum()) if (not health.empty and 'health' in health) else 0
 champion=int(meta.get('champion_count') or 0)
-branch_cov=meta.get('branch_coverage')
+branch_cov=meta.get('branch_universe_coverage')
 branch_cov=float(branch_cov) if branch_cov is not None else 0.0
+recipe_branch_cov=meta.get('branch_recipe_coverage')
+recipe_branch_cov=float(recipe_branch_cov) if recipe_branch_cov is not None else 0.0
 
 st.title('台股 Alpha Trader')
 st.caption('主力資金代理 × 動能交易 × Alpha Tournament × Walk-Forward 驗證')
@@ -52,12 +54,12 @@ m2.metric('市場 Regime',latest_regime)
 m3.metric('研究曝險上限',f'{base_exposure:.0%}')
 m4.metric('嚴格候選',len(cands))
 m5.metric('Champion',champion)
-m6.metric('分點樣本覆蓋',f'{branch_cov:.1%}')
+m6.metric('分點全市場涵蓋',f'{branch_cov:.1%}')
 
 if champion==0:
     st.warning('目前沒有 Alpha 通過 Champion 風控門檻；系統允許不交易，不會為了產生訊號而硬選。')
 if branch_cov < 0.12:
-    st.info('券商分點歷史覆蓋仍偏低；分點型 Alpha 會被限制參賽，直到歷史樣本足夠。')
+    st.info('券商分點全市場歷史涵蓋仍偏低；分點型 Alpha 會被限制參賽，直到歷史樣本足夠。')
 
 st.divider()
 t1,t2,t3,t4=st.tabs(['今日研究候選','Alpha Tournament','Alpha Health','Walk-Forward'])
@@ -88,7 +90,7 @@ with t2:
             st.success(f"目前 Champion：{champs.iloc[0].get('label','')} / {champs.iloc[0].get('recipe','')}")
         else:
             st.warning('目前沒有 Alpha 通過 Champion 門檻。')
-        st.caption('Tournament 的「同日組合回撤」先將同一訊號日候選等權平均，再計算回撤；它仍是研究診斷，不等同真實資金部位回測。')
+        st.caption(f'Tournament 的「同日組合回撤」先將同一訊號日候選等權平均，再計算回撤；它仍是研究診斷，不等同真實資金部位回測。Tournament 樣本中的分點覆蓋約 {recipe_branch_cov:.1%}。')
     if not tc.empty:
         st.markdown('#### Tournament 最新候選')
         st.dataframe(tc,width='stretch',hide_index=True)
