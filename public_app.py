@@ -43,6 +43,8 @@ branch_cov=meta.get('branch_universe_coverage')
 branch_cov=float(branch_cov) if branch_cov is not None else 0.0
 recipe_branch_cov=meta.get('branch_recipe_coverage')
 recipe_branch_cov=float(recipe_branch_cov) if recipe_branch_cov is not None else 0.0
+branch_access_status=str(meta.get('branch_access_status') or '')
+branch_access_message=str(meta.get('branch_access_message') or '')
 
 st.title('台股 Alpha Trader')
 st.caption('主力資金代理 × 動能交易 × Alpha Tournament × Walk-Forward 驗證')
@@ -58,7 +60,9 @@ m6.metric('分點全市場涵蓋',f'{branch_cov:.1%}')
 
 if champion==0:
     st.warning('目前沒有 Alpha 通過 Champion 風控門檻；系統允許不交易，不會為了產生訊號而硬選。')
-if branch_cov < 0.12:
+if branch_access_status == 'no_access':
+    st.info('目前 FinMind 權限未開放券商分點資料；公開版改以法人、融資融券與價量行為作為主力資金代理，A06 分點集中 Alpha 維持 PAUSE。')
+elif branch_cov < 0.12:
     st.info('券商分點全市場歷史涵蓋仍偏低；分點型 Alpha 會被限制參賽，直到歷史樣本足夠。')
 
 st.divider()
